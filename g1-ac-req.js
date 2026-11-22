@@ -1,34 +1,23 @@
-/**
- * 拦 applecommerce-pa.googleapis.com 的【请求】，看/改它要下单的商品 ID
- */
 (function () {
-  var url = (($request && $request.url) || "?").substring(0, 140);
-  var body = null;
-  if (typeof $request.body === "string") body = $request.body;
+  var url = (($request && $request.url) || "?");
+  console.log("[ACQ] method=" + (($request && $request.method) || "?") + " len=" + url.length + " url=" + url);
+
+  var h = ($request && $request.headers) || {};
+  var keys = [];
+  for (var k in h) {
+    if (/cookie|authorization/i.test(k)) { keys.push(k + ":<redacted>"); continue; }
+    keys.push(k + "=" + String(h[k]).substring(0, 80));
+  }
+  console.log("[ACQ] headers=" + keys.join(" | ").substring(0, 900));
+
+  var b = null, kind = "none";
+  if (typeof $request.body === "string") { b = $request.body; kind = "string"; }
   else if ($request.bodyBytes) {
-    var b = new Uint8Array($request.bodyBytes), s = "";
-    for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
-    body = s;
+    var arr = new Uint8Array($request.bodyBytes); kind = "bytes:" + arr.length;
+    var s = ""; for (var i = 0; i < arr.length; i++) s += String.fromCharCode(arr[i]);
+    b = s;
   }
-  if (!body) { console.log("[ACQ] NOBODY " + url); $done({}); return; }
-
-  var ids = body.match(/[A-Za-z0-9][A-Za-z0-9._:-]{4,80}/g) || [];
-  var uniq = []; for (var i = 0; i < ids.length; i++) if (uniq.indexOf(ids[i]) === -1) uniq.push(ids[i]);
-  console.log("[ACQ] len=" + body.length + " url=" + url);
-  console.log("[ACQ] tokens=" + uniq.slice(0, 40).join(" , "));
-
-  // 试着把计划 ID 改成 90p 商品
-  var MAP = [
-    ["g1.ios.30tb.ai.pro.m", "g1.ai.ultra.3months_ip_90p.acq"],
-    ["g1.ios.20tb.m.v2",     "g1.20tb.3months_ip_90p.acq"],
-    ["g1.ios.helium.m",      "g1.helium.3months_ip_90p.acq"],
-    ["g1.ios.2tb.ai.m",      "g1.2tb.3months_ip_90p.acq"],
-    ["g1.ios.2tb.m",         "g1.2tb.3months_ip_90p.acq"]
-  ];
-  var hit = [];
-  for (var k = 0; k < MAP.length; k++) {
-    if (body.indexOf(MAP[k][0]) !== -1) { hit.push(MAP[k][0] + "->" + MAP[k][1]); body = body.split(MAP[k][0]).join(MAP[k][1]); }
-  }
-  console.log("[ACQ] applied=" + (hit.length ? hit.join(" | ") : "none"));
-  $done({ body: body });
+  if (!b) { console.log("[ACQ] body=none kind=" + kind); $done({}); return; }
+  console.log("[ACQ] body kind=" + kind + " first=" + b.substring(0, 300).replace(/[^\x20-\x7e]/g, "."));
+  $done({});
 })();
