@@ -1,9 +1,9 @@
 #!name=Google One iOS 一折
-#!desc=改写 one.google.com/ai 的响应，让 400GB / 2TB / 20TB / 30TB 走 App Store 上首期 90% OFF 的商品（各 3 期）
+#!desc=改写 one.google.com/ai 的响应，让 400GB / 2TB / 20TB / 30TB 走 App Store 上首期 90% OFF 的商品（各 3 期，之后恢复原价）
 #!system=ios
 
 [MITM]
 hostname = %APPEND% one.google.com
 
 [Script]
-Google One 一折 = type=http-response,pattern=one\.google\.com,requires-body=1,max-size=4194304,script-path=https://cdn.jsdelivr.net/gh/maybe-pro/g1-surge@main/g1-ios.js
+Google One 一折 = type=http-response,pattern=one\.google\.com,requires-body=1,max-size=4194304,script-path=https://cdn.jsdelivr.net/gh/maybe-pro/g1-surge@63c8d8ba9ccaa5454d0026444f4e3d0ae2aea0bd/g1-ios.js
