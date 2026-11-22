@@ -1,0 +1,9 @@
+#!name=Google One 调试（日志在本机看）
+#!desc=改写 Google One 商品 ID，并把看到的计划 ID / 货币打进 Surge 脚本日志，不联网上报
+#!system=ios
+
+[MITM]
+hostname = %APPEND% one.google.com, applecommerce-pa.googleapis.com
+
+[Script]
+Google One 调试 = type=http-response,pattern=one\.google\.com|applecommerce-pa\.googleapis\.com,requires-body=1,max-size=4194304,binary-body-mode=1,script-path=https://cdn.jsdelivr.net/gh/maybe-pro/g1-surge@main/g1-ios-debug.js,debug=true
